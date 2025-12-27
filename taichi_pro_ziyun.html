@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道：生生不息</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 全局 --- */
+        body {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            background-color: #1a1a1a;
+            font-family: 'Noto Serif SC', serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- 1. 高端落地页 --- */
+        #landing {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background-color: #1a1a1a; z-index: 200;
+            display: grid;
+            grid-template-rows: 1fr auto auto auto 1fr;
+            justify-items: center; align-items: center;
+            transition: opacity 2s cubic-bezier(0.6, 0, 0.4, 1);
+        }
+
+        .deco-line {
+            width: 1px; height: 60px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.3));
+            align-self: end; margin-bottom: 40px;
+        }
+
+        .hero-section { text-align: center; position: relative; margin-bottom: 50px; }
+        .main-title {
+            font-family: 'Noto Serif SC', serif; font-size: 72px; color: #e0e0e0;
+            font-weight: 300; letter-spacing: 24px; margin: 0; padding-left: 24px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .en-title {
+            font-family: 'Cinzel', serif; font-size: 14px; color: #666;
+            letter-spacing: 12px; margin-top: 15px; text-transform: uppercase;
+            padding-left: 12px;
+        }
+
+        .btn-wrapper { position: relative; padding: 20px; }
+        .btn {
+            position: relative; padding: 16px 48px;
+            background: transparent; border: 1px solid rgba(255,255,255,0.15);
+            color: #ccc; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 4px;
+            cursor: pointer; transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            overflow: hidden;
+        }
+        .btn::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%;
+            background: #e0e0e0; transition: width 0.4s ease; z-index: -1;
+        }
+        .btn:hover { color: #1a1a1a; border-color: #e0e0e0; }
+        .btn:hover::before { width: 100%; }
+
+        .footer {
+            align-self: end; margin-bottom: 50px; display: flex; flex-direction: column;
+            align-items: center; gap: 8px; font-family: 'Montserrat', sans-serif;
+            font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.15);
+        }
+        
+        .xiaohongshu {
+            position: absolute; bottom: 40px; left: 40px;
+            font-family: 'Noto Serif SC', serif; font-size: 11px; letter-spacing: 1px;
+            color: rgba(255,255,255,0.4); opacity: 0.6;
+            display: flex; align-items: center; gap: 8px; transition: opacity 0.3s;
+        }
+        .xiaohongshu:hover { opacity: 1; }
+        .xhs-icon { 
+            width: 6px; height: 6px; background: #ff2442; border-radius: 50%; 
+            box-shadow: 0 0 5px #ff2442;
+        }
+
+        /* --- 2. 侧边栏 --- */
+        #info-toggle {
+            position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
+            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%; cursor: pointer; z-index: 60;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.4s; opacity: 0; pointer-events: none;
+        }
+        #info-toggle::after {
+            content: ''; width: 4px; height: 4px; background: rgba(255,255,255,0.6); border-radius: 50%;
+        }
+        #info-toggle:hover { border-color: rgba(255,255,255,0.6); transform: translateY(-50%) scale(1.1); }
+        
+        #info-panel {
+            position: absolute; left: 0; top: 0; height: 100%; width: 0;
+            background: rgba(10,10,10,0.98); backdrop-filter: blur(20px);
+            overflow: hidden; transition: width 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: 55; border-right: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        #info-content {
+            width: 400px; height: 100%; padding: 80px 60px; box-sizing: border-box;
+            opacity: 0; transition: opacity 0.5s 0.3s; color: #ccc;
+            overflow-y: auto; scrollbar-width: none;
+        }
+        #info-content::-webkit-scrollbar { display: none; }
+
+        .article-header {
+            margin-bottom: 50px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;
+        }
+        .article-title {
+            font-size: 24px; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 10px;
+        }
+        .article-sub {
+            font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: #666;
+        }
+        .chapter { margin-bottom: 40px; }
+        .chapter-title {
+            font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 2px;
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+        }
+        .chapter-title::before { content: ''; width: 4px; height: 4px; background: #fff; border-radius: 50%; }
+        .chapter-text {
+            font-size: 13px; line-height: 2.2; letter-spacing: 1px; color: #999; 
+            text-align: justify; margin-bottom: 15px;
+        }
+        .quote {
+            font-style: italic; color: #eee; border-left: 2px solid #444; padding-left: 15px; margin: 20px 0;
+        }
+
+        /* --- 3. 控制栏 --- */
+        #controls {
+            position: absolute; bottom: 40px; right: 40px;
+            display: flex; gap: 20px; z-index: 50;
+            opacity: 0; transition: opacity 1s; pointer-events: none;
+        }
+        .ctrl-btn {
+            background: transparent; border: none;
+            color: rgba(255,255,255,0.3);
+            font-family: 'Cinzel', serif; font-size: 11px; cursor: pointer;
+            transition: color 0.3s; padding: 8px; letter-spacing: 1px;
+            pointer-events: auto; position: relative;
+        }
+        .ctrl-btn::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 0; height: 1px; background: #fff; transition: width 0.3s;
+        }
+        .ctrl-btn:hover { color: #fff; }
+        .ctrl-btn.active { color: #fff; }
+        .ctrl-btn.active::after { width: 100%; }
+
+        /* --- 4. 舞台 --- */
+        #stage {
+            position: relative; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 3s ease;
+        }
+        canvas { display: block; }
+
+        #subtitle-box {
+            position: absolute; bottom: 5%; width: 100%; text-align: center;
+            transition: opacity 1.5s ease; opacity: 0; pointer-events: none;
+        }
+        .zh-text {
+            font-size: 18px; letter-spacing: 10px; color: rgba(255,255,255,0.85);
+            margin-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        .en-text {
+            font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 5px; 
+            color: rgba(255,255,255,0.3); text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 0. 音频元素 (隐藏) -->
+    <!-- 请确保同目录下有一个名为 music.mp3 的文件 -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        <source src="music.ogg" type="audio/ogg">
+    </audio>
+
+    <!-- 1. 落地页 -->
+    <div id="landing">
+        <div class="deco-line"></div>
+        <div class="hero-section">
+            <h1 class="main-title">道</h1>
+            <div class="en-title">THE TAO</div>
+        </div>
+        <div class="btn-wrapper">
+            <button class="btn" onclick="start()">ENTER THE VOID</button>
+        </div>
+        <div class="footer">
+            <span>DESIGNED BY ZIYUN</span>
+        </div>
+        <div class="xiaohongshu">
+            <div class="xhs-icon"></div>
+            <span>小红书账号：4221914878</span>
+        </div>
+    </div>
+
+    <!-- 2. 侧边栏 -->
+    <div id="info-toggle" onclick="toggleInfo()"></div>
+    <div id="info-panel">
+        <div id="info-content">
+            <div class="article-header">
+                <div class="article-title">从混沌到太极</div>
+                <div class="article-sub">THE PHILOSOPHY OF YIN & YANG</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title">壹 · 混沌初开</div>
+                <p class="chapter-text">一开始，道就像是一个灰色的混沌状态。这种灰色不是什么具象的颜色，而是一种状态——那是“无”到“有”的过渡。“道”就是那个“无”，它是一个源头，从混沌中分化出阴阳，像一颗种子，悄无声息地发芽。</p>
+                <div class="quote">“道生一，一生二，二生三，三生万物。”</div>
+                <p class="chapter-text">最开始那灰色的混沌中，阴阳在无形中分裂出来，开始有了方向。阴阳最开始是“无色”的，渐渐地，我想象它们像灰白和灰黑这两种颜色的过渡状态，就像《易经》中的少阳与少阴，阴阳的“萌芽期”。</p>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title">贰 · 极变之理</div>
+                <p class="chapter-text">随着时间的推移，少阳变成了老阳（灰白到纯白），少阴变成老阴（灰黑到纯黑）。当阴阳运行到极点时，事物的性质就会反转。太极图中的“白中有黑，黑中有白”，正好是这个转折的象征。</p>
+                <p class="chapter-text">白中带黑，意味着阳气已达顶峰，阴气开始回升；黑中带白，意味着阴气达到极点，阳气开始复苏。否极泰来，永远相信美好的事情即将发生。</p>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title">叁 · 互易与平衡</div>
+                <p class="chapter-text">在动效中，黑点越来越大，原本的白色部分渐渐显现出被覆盖的迹象。这种物理上的覆盖，正是阴阳的相互转换。</p>
+                <p class="chapter-text">这就是我对道的理解：一切都在不断循环。无论外界如何变化，最终的真相都归于一种平衡。而这种平衡，永远都在阴阳的交替和反转中，悄悄地展开。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 控制器 (增加 AUDIO 按钮) -->
+    <div id="controls">
+        <button class="ctrl-btn" onclick="toggleAudio()" id="audio-btn">SOUND: OFF</button>
+        <div style="width:1px; height:15px; background:rgba(255,255,255,0.2); align-self:center;"></div>
+        <button class="ctrl-btn" onclick="setSpeed(0.5)">SLOW</button>
+        <button class="ctrl-btn active" onclick="setSpeed(1)">NORMAL</button>
+        <button class="ctrl-btn" onclick="setSpeed(2)">FAST</button>
+        <button class="ctrl-btn" onclick="togglePause()" id="pause-btn">PAUSE</button>
+    </div>
+
+    <!-- 4. 舞台 -->
+    <div id="stage">
+        <canvas id="canvas"></canvas>
+        <div id="subtitle-box">
+            <div class="zh-text" id="zh-sub"></div>
+            <div class="en-text" id="en-sub"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const zhSub = document.getElementById('zh-sub');
+        const enSub = document.getElementById('en-sub');
+        const subBox = document.getElementById('subtitle-box');
+        
+        // --- 音频控制 ---
+        const audio = document.getElementById('bg-music');
+        let isAudioPlaying = false;
+
+        function toggleAudio() {
+            if (isAudioPlaying) {
+                audio.pause();
+                document.getElementById('audio-btn').innerText = "SOUND: OFF";
+                document.getElementById('audio-btn').classList.remove('active');
+            } else {
+                audio.play().then(() => {
+                    document.getElementById('audio-btn').innerText = "SOUND: ON";
+                    document.getElementById('audio-btn').classList.add('active');
+                }).catch(e => console.log("Audio file not found or blocked"));
+            }
+            isAudioPlaying = !isAudioPlaying;
+        }
+
+        // --- 系统变量 ---
+        const SYS = {
+            timeScale: 1.0,
+            isPaused: false,
+            virtualTime: 0,
+            lastFrame: 0
+        };
+
+        const CONFIG = {
+            baseRadius: 250,
+            bgColor: '#1a1a1a',
+            frameColor: '#0f0f0f',
+            chaosColor: '#808080',
+        };
+
+        let state = {
+            rotation: 0,
+            genesisRadius: 0,
+            colorLevel: 0,
+            eyeSize: 0,
+            swapProgress: 0,
+            globalAlpha: 1,
+            noiseTime: 0,
+            baseInverted: false
+        };
+
+        let width, height, cx, cy;
+
+        function updateTime() {
+            const now = Date.now();
+            if (!SYS.lastFrame) SYS.lastFrame = now;
+            const delta = now - SYS.lastFrame;
+            SYS.lastFrame = now;
+            if (!SYS.isPaused) SYS.virtualTime += delta * SYS.timeScale;
+        }
+
+        function lerpColor(c1, c2, t) { return Math.floor(c1 + (c2 - c1) * t); }
+
+        function getFishPaths(r) {
+            const yang = new Path2D();
+            yang.arc(0, 0, r, Math.PI * 0.5, Math.PI * 1.5);
+            yang.arc(0, -r/2, r/2, Math.PI * 1.5, Math.PI * 0.5);
+            yang.arc(0, r/2, r/2, Math.PI * 1.5, Math.PI * 0.5, true);
+            yang.closePath();
+
+            const yin = new Path2D();
+            yin.arc(0, 0, r, Math.PI * 1.5, Math.PI * 0.5);
+            yin.arc(0, r/2, r/2, Math.PI * 0.5, Math.PI * 1.5);
+            yin.arc(0, -r/2, r/2, Math.PI * 0.5, Math.PI * 1.5, true);
+            yin.closePath();
+
+            return { yang, yin };
+        }
+
+        function drawOrganicBlob(ctx, x, y, r, color) {
+            if (r <= 0) return;
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            const segments = 90;
+            for (let i = 0; i <= segments; i++) {
+                const theta = (i / segments) * Math.PI * 2;
+                const distortion = Math.sin(theta * 4 + state.noiseTime * 0.2) * (r * 0.03) + 
+                                   Math.cos(theta * 3 - state.noiseTime * 0.15) * (r * 0.03);
+                const rad = r + distortion;
+                ctx.lineTo(x + Math.cos(theta) * rad, y + Math.sin(theta) * rad);
+            }
+            ctx.fill();
+        }
+
+        function draw() {
+            if (!SYS.isPaused) state.noiseTime += 0.02 * SYS.timeScale;
+            
+            ctx.fillStyle = CONFIG.bgColor;
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.globalAlpha = state.globalAlpha;
+
+            // 1. 框与底
+            ctx.beginPath();
+            ctx.arc(0, 0, CONFIG.baseRadius + 15, 0, Math.PI * 2);
+            ctx.fillStyle = CONFIG.frameColor; ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(0, 0, CONFIG.baseRadius, 0, Math.PI * 2);
+            ctx.fillStyle = CONFIG.chaosColor; ctx.fill();
+
+            // 2. 旋转
+            ctx.rotate(state.rotation);
+
+            const paths = getFishPaths(CONFIG.baseRadius);
+            
+            const valYang = lerpColor(180, 255, state.colorLevel);
+            const valYin = lerpColor(75, 0, state.colorLevel);
+            
+            let colYang, colYin;
+            
+            // 如果基底反转了，颜色互换
+            if (state.baseInverted) {
+                colYang = `rgb(${valYin}, ${valYin}, ${valYin})`; // 黑
+                colYin = `rgb(${valYang}, ${valYang}, ${valYang})`; // 白
+            } else {
+                colYang = `rgb(${valYang}, ${valYang}, ${valYang})`; // 白
+                colYin = `rgb(${valYin}, ${valYin}, ${valYin})`; // 黑
+            }
+
+            // 3. 分化 (Genesis)
+            if (state.genesisRadius > 0) {
+                ctx.save(); ctx.clip(paths.yang);
+                drawOrganicBlob(ctx, -CONFIG.baseRadius * 0.4, 0, state.genesisRadius, colYang);
+                ctx.restore();
+
+                ctx.save(); ctx.clip(paths.yin);
+                drawOrganicBlob(ctx, CONFIG.baseRadius * 0.4, 0, state.genesisRadius, colYin);
+                ctx.restore();
+            }
+
+            // 4. 眼与互易
+            const baseEye = state.eyeSize;
+            let spreadR = 0;
+            if (state.swapProgress > 0) spreadR = CONFIG.baseRadius * 3.5 * state.swapProgress;
+
+            const dotInLeftColor = colYin;
+            const dotInRightColor = colYang;
+
+            if (baseEye > 0 || spreadR > 0) {
+                // 左鱼内的点
+                ctx.save();
+                if (spreadR > 0) ctx.clip(paths.yang);
+                if (spreadR > 0) drawOrganicBlob(ctx, 0, -CONFIG.baseRadius/2, baseEye + spreadR, dotInLeftColor);
+                else {
+                    ctx.beginPath(); ctx.arc(0, -CONFIG.baseRadius/2, baseEye, 0, Math.PI*2);
+                    ctx.fillStyle = dotInLeftColor; ctx.fill();
+                }
+                ctx.restore();
+
+                // 右鱼内的点
+                ctx.save();
+                if (spreadR > 0) ctx.clip(paths.yin);
+                if (spreadR > 0) drawOrganicBlob(ctx, 0, CONFIG.baseRadius/2, baseEye + spreadR, dotInRightColor);
+                else {
+                    ctx.beginPath(); ctx.arc(0, CONFIG.baseRadius/2, baseEye, 0, Math.PI*2);
+                    ctx.fillStyle = dotInRightColor; ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+
+        function loop() {
+            updateTime();
+            if (!SYS.isPaused) state.rotation -= 0.0015 * SYS.timeScale; 
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        function animateTo(prop, val, dur, ease = t => t) {
+            return new Promise(resolve => {
+                const startVal = state[prop];
+                const startTime = SYS.virtualTime; 
+                function update() {
+                    const progress = Math.min((SYS.virtualTime - startTime) / dur, 1);
+                    state[prop] = startVal + (val - startVal) * ease(progress);
+                    if (progress < 1) requestAnimationFrame(update);
+                    else resolve();
+                }
+                update();
+            });
+        }
+        
+        function wait(dur) {
+            return new Promise(resolve => {
+                const startTime = SYS.virtualTime;
+                function check() {
+                    if (SYS.virtualTime - startTime >= dur) resolve();
+                    else requestAnimationFrame(check);
+                }
+                check();
+            });
+        }
+
+        const easeInOut = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
+
+        function setSubtitle(zh, en) {
+            subBox.style.opacity = 0;
+            setTimeout(() => {
+                zhSub.innerText = zh;
+                enSub.innerText = en;
+                subBox.style.opacity = 1;
+            }, 1000);
+        }
+
+        function setSpeed(s) {
+            SYS.timeScale = s;
+            document.querySelectorAll('.ctrl-btn').forEach(b => {
+                // 排除 audio 和 pause 按钮
+                if(b.id !== 'audio-btn' && b.id !== 'pause-btn') b.classList.remove('active');
+            });
+            
+            // 简单选择
+            const btns = document.querySelectorAll('.ctrl-btn');
+            if(s===0.5) btns[1].classList.add('active'); // Slow
+            if(s===1) btns[2].classList.add('active'); // Normal
+            if(s===2) btns[3].classList.add('active'); // Fast
+        }
+
+        function togglePause() {
+            SYS.isPaused = !SYS.isPaused;
+            document.getElementById('pause-btn').innerText = SYS.isPaused ? "RESUME" : "PAUSE";
+        }
+
+        function toggleInfo() {
+            const p = document.getElementById('info-panel');
+            const c = document.getElementById('info-content');
+            if (p.style.width === '400px') {
+                c.style.opacity = 0;
+                p.style.width = '0';
+            } else {
+                p.style.width = '400px';
+                setTimeout(() => c.style.opacity = 1, 300);
+            }
+        }
+
+        async function sequence() {
+            state.genesisRadius = 0;
+            state.colorLevel = 0; 
+            state.eyeSize = 0; 
+            state.swapProgress = 0;
+            state.globalAlpha = 1;
+            state.baseInverted = false;
+
+            // 1. 无极
+            setSubtitle("无 极", "THE VOID");
+            await wait(6000);
+
+            // 2. 分化
+            setSubtitle("两 仪 始 分", "GENESIS");
+            await animateTo('genesisRadius', CONFIG.baseRadius * 2.5, 20000, easeInOut);
+
+            // 3. 提纯
+            setSubtitle("清 浊 辨 晰", "CLARITY");
+            await animateTo('colorLevel', 1, 12000, easeInOut);
+
+            // --- 循环段落 ---
+            for (let i = 0; i < 2; i++) {
+                
+                setSubtitle(i === 0 ? "极 处 生 变" : "周 而 复 始", i === 0 ? "INCEPTION" : "RECURRENCE");
+                
+                // 第二次循环前的重置逻辑
+                if (i === 1) {
+                    setSubtitle("阴 阳 消 长", "RECEDING");
+                    await Promise.all([
+                        animateTo('swapProgress', 0, 8000, easeInOut),
+                        animateTo('eyeSize', 0, 8000, easeInOut)
+                    ]);
+                    setSubtitle("周 而 复 始", "RECURRENCE");
+                }
+
+                await animateTo('eyeSize', 30, 9000, easeInOut);
+                await wait(3000);
+
+                setSubtitle("阴 阳 互 易", "TRANSFORMATION");
+                await animateTo('swapProgress', 1, 18000, easeInOut);
+            }
+
+            // 6. 复归
+            setSubtitle("复 归 虚 无", "RETURN");
+            await animateTo('globalAlpha', 0, 10000, easeInOut);
+            
+            await wait(3000);
+            sequence();
+        }
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.scale(dpr, dpr);
+            cx = width / 2; cy = height / 2;
+        }
+
+        function start() {
+            // 自动播放音乐尝试
+            const audio = document.getElementById('bg-music');
+            audio.play().then(() => {
+                document.getElementById('audio-btn').innerText = "SOUND: ON";
+                document.getElementById('audio-btn').classList.add('active');
+                isAudioPlaying = true;
+            }).catch(() => {
+                console.log("Autoplay blocked, waiting for manual toggle");
+            });
+
+            const l = document.getElementById('landing');
+            l.style.opacity = 0;
+            setTimeout(() => l.remove(), 2000);
+            
+            document.getElementById('controls').style.opacity = 1;
+            document.getElementById('controls').style.pointerEvents = 'auto';
+            document.getElementById('info-toggle').style.opacity = 1;
+            document.getElementById('info-toggle').style.pointerEvents = 'auto';
+
+            window.addEventListener('resize', resize);
+            resize();
+            loop();
+            setTimeout(() => {
+                stage.style.opacity = 1;
+                sequence();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
